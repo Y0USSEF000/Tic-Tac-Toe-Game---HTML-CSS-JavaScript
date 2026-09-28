@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Tic Tac Toe</title>
+
+    <style>
+
+    
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+
+            background: linear-gradient(135deg, #202020, #555);
+
+            color: white;
+
+            font-family: Arial, Helvetica, sans-serif;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+
+
+        .game-container {
+            width: 700px;
+            max-width: 95%;
+
+            padding: 30px;
+
+            background-color: #292929;
+
+            border-radius: 20px;
+
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+
+            text-align: center;
+        }
+
+
+
+
+        h1 {
+            margin-top: 0;
+
+            font-size: 45px;
+
+            letter-spacing: 3px;
+        }
+
+
+ 
+
+        .status {
+            font-size: 22px;
+
+            margin-bottom: 20px;
+
+            background-color: #444;
+
+            padding: 12px;
+
+            border-radius: 10px;
+        }
+
+
+
+
+        .container {
+            display: grid;
+
+            grid-template-columns: repeat(3, 1fr);
+
+            gap: 10px;
+
+            width: 100%;
+        }
+
+
+    
+
+        .box {
+            height: 180px;
+
+            background-color: white;
+
+            border: 3px solid black;
+
+            border-radius: 15px;
+
+            color: black;
+
+            font-size: 100px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            transition: 0.3s;
+        }
+
+
+
+
+        .box:hover {
+            background-color: #e8e8e8;
+
+            transform: scale(1.04);
+        }
+
+
+  
+
+        .x {
+            color: #2196f3;
+        }
+
+        .o {
+            color: #ff5252;
+        }
+
+
+   
+
+        .winner {
+            background-color: #28a745 !important;
+
+            color: white !important;
+        }
+
+
+   
+
+        #message {
+            min-height: 35px;
+
+            margin-top: 20px;
+
+            font-size: 24px;
+
+            font-weight: bold;
+        }
+
+
+        
+        #restartButton {
+            margin-top: 15px;
+
+            padding: 12px 30px;
+
+            border: none;
+
+            border-radius: 10px;
+
+            background-color: #2196f3;
+
+            color: white;
+
+            font-size: 18px;
+
+            cursor: pointer;
+
+            transition: 0.3s;
+        }
+
+
+        #restartButton:hover {
+            background-color: #0d6efd;
+
+            transform: scale(1.05);
+        }
+
+
+
+        @media (max-width: 600px) {
+
+            body {
+                align-items: flex-start;
+
+                padding-top: 30px;
+            }
+
+            .game-container {
+                padding: 20px;
+
+                width: 95%;
+            }
+
+            h1 {
+                font-size: 32px;
+            }
+
+            .status {
+                font-size: 18px;
+            }
+
+            .container {
+                gap: 6px;
+            }
+
+            .box {
+                height: 28vw;
+
+                max-height: 120px;
+
+                font-size: 15vw;
+            }
+
+            #message {
+                font-size: 19px;
+            }
+
+            #restartButton {
+                width: 100%;
+            }
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+    <div class="game-container">
+
+        <h1>Tic Tac Toe</h1>
+
+
+        <div class="status">
+            Current Player:
+            <span id="currentPlayer">X</span>
+        </div>
+
+
+        <div class="container">
+
+            <div class="box" id="div1"></div>
+            <div class="box" id="div2"></div>
+            <div class="box" id="div3"></div>
+
+            <div class="box" id="div4"></div>
+            <div class="box" id="div5"></div>
+            <div class="box" id="div6"></div>
+
+            <div class="box" id="div7"></div>
+            <div class="box" id="div8"></div>
+            <div class="box" id="div9"></div>
+
+        </div>
+
+
+        <div id="message"></div>
+
+
+        <button id="restartButton">
+            Restart Game
+        </button>
+
+    </div>
+
+
+    <script>
+
+
+        let div1 = document.getElementById("div1");
+        let div2 = document.getElementById("div2");
+        let div3 = document.getElementById("div3");
+
+        let div4 = document.getElementById("div4");
+        let div5 = document.getElementById("div5");
+        let div6 = document.getElementById("div6");
+
+        let div7 = document.getElementById("div7");
+        let div8 = document.getElementById("div8");
+        let div9 = document.getElementById("div9");
+
+
+
+        let divs = [
+            div1,
+            div2,
+            div3,
+            div4,
+            div5,
+            div6,
+            div7,
+            div8,
+            div9
+        ];
+
+
+        let currentPlayerElement =
+            document.getElementById("currentPlayer");
+
+
+        let message =
+            document.getElementById("message");
+
+
+        let restartButton =
+            document.getElementById("restartButton");
+
+
+
+
+        let game = "X";
+
+        let gameOver = false;
+
+
+
+
+        divs.forEach(div => {
+
+            div.addEventListener("click", function () {
+
+                changeValue(div);
+
+            });
+
+        });
+
+
+
+
+        function changeValue(div) {
+
+            if (
+                div.textContent == "" &&
+                gameOver == false
+            ) {
+
+                div.textContent = game;
+
+
+
+                if (game == "X") {
+
+                    div.classList.add("x");
+
+                } else {
+
+                    div.classList.add("o");
+
+                }
+
+
+
+                checkWinner();
+
+
+
+                if (gameOver == false) {
+
+                    if (game == "X") {
+
+                        game = "O";
+
+                    } else {
+
+                        game = "X";
+
+                    }
+
+
+                    currentPlayerElement.textContent = game;
+
+                }
+
+            }
+
+        }
+
+
+
+
+
+        function showWinner(divA, divB, divC) {
+
+            gameOver = true;
+
+
+            divA.classList.add("winner");
+
+            divB.classList.add("winner");
+
+            divC.classList.add("winner");
+
+
+            message.textContent =
+                "Game Over! " +
+                divA.textContent +
+                " wins!";
+
+        }
+
+
+
+     
+
+        function checkWinner() {
+
+
+
+            if (
+                div1.textContent == div2.textContent &&
+                div2.textContent == div3.textContent &&
+                div1.textContent != ""
+            ) {
+
+                showWinner(
+                    div1,
+                    div2,
+                    div3
+                );
+
+            }
+
+
+
+            else if (
+                div4.textContent == div5.textContent &&
+                div5.textContent == div6.textContent &&
+                div4.textContent != ""
+            ) {
+
+                showWinner(
+                    div4,
+                    div5,
+                    div6
+                );
+
+            }
+
+
+
+            else if (
+                div7.textContent == div8.textContent &&
+                div8.textContent == div9.textContent &&
+                div7.textContent != ""
+            ) {
+
+                showWinner(
+                    div7,
+                    div8,
+                    div9
+                );
+
+            }
+
+
+
+            else if (
+                div1.textContent == div4.textContent &&
+                div4.textContent == div7.textContent &&
+                div1.textContent != ""
+            ) {
+
+                showWinner(
+                    div1,
+                    div4,
+                    div7
+                );
+
+            }
+
+
+
+            else if (
+                div2.textContent == div5.textContent &&
+                div5.textContent == div8.textContent &&
+                div2.textContent != ""
+            ) {
+
+                showWinner(
+                    div2,
+                    div5,
+                    div8
+                );
+
+            }
+
+
+
+            else if (
+                div3.textContent == div6.textContent &&
+                div6.textContent == div9.textContent &&
+                div3.textContent != ""
+            ) {
+
+                showWinner(
+                    div3,
+                    div6,
+                    div9
+                );
+
+            }
+
+
+
+            else if (
+                div1.textContent == div5.textContent &&
+                div5.textContent == div9.textContent &&
+                div1.textContent != ""
+            ) {
+
+                showWinner(
+                    div1,
+                    div5,
+                    div9
+                );
+
+            }
+
+
+
+            else if (
+                div3.textContent == div5.textContent &&
+                div5.textContent == div7.textContent &&
+                div3.textContent != ""
+            ) {
+
+                showWinner(
+                    div3,
+                    div5,
+                    div7
+                );
+
+            }
+
+
+            /* Check draw */
+
+            else {
+
+                checkDraw();
+
+            }
+
+        }
+
+
+
+
+        function checkDraw() {
+
+            let allFull = true;
+
+
+            divs.forEach(div => {
+
+                if (div.textContent == "") {
+
+                    allFull = false;
+
+                }
+
+            });
+
+
+            if (
+                allFull == true &&
+                gameOver == false
+            ) {
+
+                gameOver = true;
+
+                message.textContent =
+                    "Draw! Nobody wins.";
+
+            }
+
+        }
+
+
+
+
+
+        restartButton.addEventListener(
+            "click",
+            function () {
+
+                restartGame();
+
+            }
+        );
+
+
+        function restartGame() {
+
+            divs.forEach(div => {
+
+                div.textContent = "";
+
+                div.classList.remove("x");
+
+                div.classList.remove("o");
+
+                div.classList.remove("winner");
+
+            });
+
+
+            game = "X";
+
+            gameOver = false;
+
+
+            currentPlayerElement.textContent = "X";
+
+            message.textContent = "";
+
+        }
+
+    </script>
+
+</body>
+</html>
